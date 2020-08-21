@@ -1,6 +1,5 @@
 /*
- * This is an example of a server that will serve static content out of the
- * $CWD/examples/static path.
+ * This is a simple server that will serve static content out of the $CWD.
  */
 
 import {
@@ -11,7 +10,7 @@ import {
   red,
 } from "https://deno.land/std@0.65.0/fmt/colors.ts";
 
-import { Application, HttpError, send, Status } from "../mod.ts";
+import { Application, HttpError, send, Status } from "https://deno.land/x/oak/mod.ts";
 
 const app = new Application();
 
