@@ -2,15 +2,7 @@
  * This is a simple server that will serve static content out of the $CWD.
  */
 
-import {
-  green,
-  cyan,
-  bold,
-  yellow,
-  red,
-} from "https://deno.land/std@0.65.0/fmt/colors.ts";
-
-import { Application, HttpError, send, Status } from "https://deno.land/x/oak/mod.ts";
+import { Application, HttpError, send, Status } from "https://deno.land/x/oak@v6.3.1/mod.ts";
 
 const app = new Application();
 
@@ -20,7 +12,6 @@ app.use(async (context, next) => {
     await next();
   } catch (e) {
     if (e instanceof HttpError) {
-      // deno-lint-ignore no-explicit-any
       context.response.status = e.status as any;
       if (e.expose) {
         context.response.body = `<!DOCTYPE html>
@@ -45,7 +36,7 @@ app.use(async (context, next) => {
                 <h1>500 - Internal Server Error</h1>
               </body>
             </html>`;
-      console.log("Unhandled Error:", red(bold(e.message)));
+      console.log("Unhandled Error:", e.message);
       console.log(e.stack);
     }
   }
@@ -55,13 +46,7 @@ app.use(async (context, next) => {
 app.use(async (context, next) => {
   await next();
   const rt = context.response.headers.get("X-Response-Time");
-  console.log(
-    `${green(context.request.method)} ${cyan(context.request.url.pathname)} - ${
-      bold(
-        String(rt),
-      )
-    }`,
-  );
+  console.log(`${context.request.method} ${context.request.url.pathname} - ${String(rt)}`);
 });
 
 // Response Time
@@ -81,9 +66,10 @@ app.use(async (context) => {
 });
 
 app.addEventListener("listen", ({ hostname, port }) => {
-  console.log(
-    bold("Start listening on ") + yellow(`${hostname}:${port}`),
-  );
+  console.log("Listening on " + `${hostname}:${port}`);
 });
 
-await app.listen({ hostname: "127.0.0.1", port: 8000 });
+let portArg = Deno.args.find(a => a.startsWith("--port="));
+let port = portArg ? Number(portArg.split("=")[1]) : 8000;
+
+await app.listen({ hostname: "127.0.0.1", port });
