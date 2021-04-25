@@ -61,6 +61,7 @@ app.use(async (context, next) => {
 app.use((context, next) => {
   context.response.headers.set("Cross-Origin-Embedder-Policy", `require-corp`);
   context.response.headers.set("Cross-Origin-Opener-Policy", `same-origin`);
+  next();
 });
 
 // Send static content
