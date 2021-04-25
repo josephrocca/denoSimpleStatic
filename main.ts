@@ -61,8 +61,8 @@ app.use(async (context, next) => {
 app.use(async (context) => {
   
   // To allow SharedArrayBuffer use, and other features: https://web.dev/coop-coep/
-  context.response.headers.set("Cross-Origin-Embedder-Policy", `require-corp`);
-  context.response.headers.set("Cross-Origin-Opener-Policy", `same-origin`);
+  context.response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+  context.response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
   
   await context.send({
     root: `${Deno.cwd()}`,
