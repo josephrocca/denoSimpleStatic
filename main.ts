@@ -57,6 +57,12 @@ app.use(async (context, next) => {
   context.response.headers.set("X-Response-Time", `${ms}ms`);
 });
 
+// To allow SharedArrayBuffer use, and other features: https://web.dev/coop-coep/
+app.use((context, next) => {
+  context.response.headers.set("Cross-Origin-Embedder-Policy", `require-corp`);
+  context.response.headers.set("Cross-Origin-Opener-Policy", `same-origin`);
+});
+
 // Send static content
 app.use(async (context) => {
   await context.send({
