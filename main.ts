@@ -57,15 +57,13 @@ app.use(async (context, next) => {
   context.response.headers.set("X-Response-Time", `${ms}ms`);
 });
 
-// To allow SharedArrayBuffer use, and other features: https://web.dev/coop-coep/
-app.use(async (context, next) => {
-  context.response.headers.set("Cross-Origin-Embedder-Policy", `require-corp`);
-  context.response.headers.set("Cross-Origin-Opener-Policy", `same-origin`);
-  await next();
-});
-
 // Send static content
 app.use(async (context) => {
+  
+  // To allow SharedArrayBuffer use, and other features: https://web.dev/coop-coep/
+  context.response.headers.set("Cross-Origin-Embedder-Policy", `require-corp`);
+  context.response.headers.set("Cross-Origin-Opener-Policy", `same-origin`);
+  
   await context.send({
     root: `${Deno.cwd()}`,
     index: "index.html",
