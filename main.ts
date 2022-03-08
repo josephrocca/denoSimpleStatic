@@ -14,28 +14,13 @@ app.use(async (context, next) => {
     if (e instanceof HttpError) {
       context.response.status = e.status as any;
       if (e.expose) {
-        context.response.body = `<!DOCTYPE html>
-            <html>
-              <body>
-                <h1>${e.status} - ${e.message}</h1>
-              </body>
-            </html>`;
+        context.response.body = `${e.status} - ${e.message}`;
       } else {
-        context.response.body = `<!DOCTYPE html>
-            <html>
-              <body>
-                <h1>${e.status} - ${Status[e.status]}</h1>
-              </body>
-            </html>`;
+        context.response.body = `${e.status} - ${Status[e.status]}`;
       }
     } else if (e instanceof Error) {
       context.response.status = 500;
-      context.response.body = `<!DOCTYPE html>
-            <html>
-              <body>
-                <h1>500 - Internal Server Error</h1>
-              </body>
-            </html>`;
+      context.response.body = `500 - Internal Server Error`;
       console.log("Unhandled Error:", e.message);
       console.log(e.stack);
     }
@@ -59,11 +44,13 @@ app.use(async (context, next) => {
 
 app.use(async (context, next) => {
   try {
+    
     // To allow SharedArrayBuffer use, and other features: https://web.dev/coop-coep/
     context.response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
     context.response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    
     await context.send({
-      root: `${Deno.cwd()}`,
+      root: Deno.cwd(),
       index: "index.html",
     });
   } catch {
@@ -74,5 +61,5 @@ app.use(async (context, next) => {
 let portArg = Deno.args.find(a => a.startsWith("--port="));
 let port = portArg ? Number(portArg.split("=")[1]) : 8000;
 
-await app.listen({ port: 8000 });
-console.log("Listening on " + `localhost:${port}`);
+console.log(`Listening at localhost:${port}`);
+await app.listen({ port });
