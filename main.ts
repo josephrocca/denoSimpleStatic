@@ -2,7 +2,7 @@
  * This is a simple server that will serve static content out of the $CWD.
  */
 
-import { Application, HttpError, send, Status } from "https://deno.land/x/oak@v6.3.1/mod.ts";
+import { Application, HttpError, send, Status } from "https://deno.land/x/oak@v10.4.0/mod.ts";
 
 const app = new Application();
 
@@ -57,24 +57,22 @@ app.use(async (context, next) => {
   context.response.headers.set("X-Response-Time", `${ms}ms`);
 });
 
-// Send static content
-app.use(async (context) => {
-  
-  // To allow SharedArrayBuffer use, and other features: https://web.dev/coop-coep/
-  context.response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
-  context.response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
-  
-  await context.send({
-    root: `${Deno.cwd()}`,
-    index: "index.html",
-  });
-});
-
-app.addEventListener("listen", ({ hostname, port }) => {
-  console.log("Listening on " + `${hostname}:${port}`);
+app.use(async (context, next) => {
+  try {
+    // To allow SharedArrayBuffer use, and other features: https://web.dev/coop-coep/
+    context.response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+    context.response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    await context.send({
+      root: `${Deno.cwd()}`,
+      index: "index.html",
+    });
+  } catch {
+    next();
+  }
 });
 
 let portArg = Deno.args.find(a => a.startsWith("--port="));
 let port = portArg ? Number(portArg.split("=")[1]) : 8000;
 
-await app.listen({ hostname: "127.0.0.1", port });
+await app.listen({ port: 8000 });
+console.log("Listening on " + `localhost:${port}`);
