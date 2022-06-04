@@ -46,7 +46,7 @@ app.use(async (context, next) => {
   try {
     
     // To allow SharedArrayBuffer use, and other features: https://web.dev/coop-coep/
-    context.response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+    context.response.headers.set("Cross-Origin-Embedder-Policy", "credentialless"); // we use "credentialless" instead of "require-corp" because former allows embedding cross-origin stuff
     context.response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
     
     await context.send({
